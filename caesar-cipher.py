@@ -16,46 +16,76 @@ outputfile = ''
 metodo = ''
 
 def decrypt(reemplazar,escribir):
+    letra = ''
+    diferencia = 0
+
     with open(reemplazar) as f:
         c = Counter(letter for line in f 
             for letter in line.lower() 
                 if letter in ascii_lowercase)
-        letra = ''
         repeticion = 0
         for letter, repetitions in c.iteritems():
             if repeticion < repetitions:
                 repeticion = repetitions
                 letra = letter
         letrascii = ord(letra)
-        print 'la letra que mas se repite es %s', letra
-        diferencia = ord('e')-ord(letra) #se supone idioma ingles
-        
-        archivo = open(escribir,"w")
-        
+        print 'The letter %s is the most common with %s reps.' % (letra, repeticion)
+        diferencia = ord('e')-ord(letra) #se supone idioma ingles por ahora
+
+        result = ''
+
         with open(reemplazar) as fileobj:
-            for line in fileobj:  
-                for ch in line: 
+            for line in fileobj:
+                for ch in line:
                     letrascii = ord(ch)
                     valorsincodificar = 0
                     if letrascii < (97-diferencia):
                         valorsincodificar = letrascii + 26 + diferencia
                     else:
                         valorsincodificar = letrascii + diferencia
-                    letra2 = chr(valorsincodificar)
-                    archivo.write(letra2)
-        archivo.close()
-        print 'Status : COMPLETED'
-
+                    letra = chr(valorsincodificar)
+                    result = result + letra
+ 
+        if escribir == 'console':
+            print result
+        else:
+            archivo = open(escribir,"w")
+            archivo.write(result)
+            archivo.close()
+            print 'Status : COMPLETED'
+        
 def main(argv):
 
     try:
         opts, args = getopt.getopt(argv, "hi:o:cd", ["ifile=","ofile="])
     except getopt.GetoptError:
-        print 'cryptography-caesar-cipher.py -<metodo> -i <inputfile> -o <outputfile>'
+        print """
+Usage : cryptography-caesar-cipher.py -<metodo> -i <inputfile> -o <outputfile>
+            
+Options : 
+     <method> : -> -d  allow to give an encripted message as an input and give a readable output
+                -> -c  allow to give clear or readable text file and return a encrypted output
+         
+     <inputfile> : indicate the input file with the message that would be the target for the method selected
+         
+     <outputfile> : indicate the output file where would be stored the message.
+                   -o console : allow to print the message on the terminal without saving.
+            """
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'cryptography-caesar-cipher.py -<metodo> -i <inputfile> -o <outputfile>'
+            print """
+Usage : cryptography-caesar-cipher.py -<metodo> -i <inputfile> -o <outputfile>
+            
+Options : 
+     <method> : -> -d  allow to give an encripted message as an input and give a readable output
+                -> -c  allow to give clear or readable text file and return a encrypted output
+         
+     <inputfile> : indicate the input file with the message that would be the target for the method selected
+         
+     <outputfile> : indicate the output file where would be stored the message.
+                   -o console : allow to print the message on the terminal without saving.
+            """
             sys.exit()
         elif opt == "-c":
             metodo = 'crypt'
